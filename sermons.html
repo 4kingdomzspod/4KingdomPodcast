@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sermons & Episodes | 4Kingdom Podcast</title>
+<meta name="description" content="Watch and listen to every 4Kingdom Podcast episode on YouTube, Spotify, and Instagram." />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #0A4DBF; --blue-dark: #083A90; --blue-accent: #DCE8FF;
+  --gray-light: #F5F5F5; --gray-mid: #E8E8E8;
+  --text: #1D1D1D; --text-muted: #5A5A6A; --white: #FFFFFF;
+  --nav-height: 72px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; color: var(--text); background: var(--white); line-height: 1.65; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(8px); border-bottom: 1px solid var(--gray-mid); height: var(--nav-height); display: flex; align-items: center; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.nav-logo { display: flex; align-items: center; gap: 0.75rem; font-weight: 800; font-size: 1.25rem; color: var(--blue); letter-spacing: -0.02em; }
+.nav-logo-icon { width: 40px; height: 40px; background: var(--blue); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; flex-shrink: 0; }
+.nav-links { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+.nav-links a { padding: 0.5rem 0.875rem; border-radius: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); transition: background 0.15s, color 0.15s; }
+.nav-links a:hover { background: var(--blue-accent); color: var(--blue); }
+.nav-cta { background: var(--blue) !important; color: white !important; padding: 0.625rem 1.25rem !important; border-radius: 8px; font-size: 0.875rem !important; font-weight: 600 !important; }
+.nav-cta:hover { background: var(--blue-dark) !important; }
+@media (max-width: 768px) { .nav-links { display: none; } }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%); color: white; padding: 5rem 1.5rem 4rem; text-align: center; }
+.hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 1rem; }
+.hero p { font-size: 1.1rem; opacity: 0.85; max-width: 560px; margin: 0 auto 2rem; }
+
+/* PLATFORM PILLS */
+.platform-pills { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 100px; font-size: 0.875rem; font-weight: 700; transition: opacity 0.15s; cursor: pointer; }
+.pill:hover { opacity: 0.85; }
+.pill svg { width: 18px; height: 18px; }
+.pill-yt { background: #FF0000; color: white; }
+.pill-ig { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color: white; }
+.pill-sp { background: #1DB954; color: white; }
+
+/* CONTAINER */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.section { padding: 4rem 0; }
+.section-alt { background: var(--gray-light); }
+.section-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue); margin-bottom: 0.5rem; display: block; }
+.section-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.section-sub { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+/* EPISODES GRID */
+.episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.75rem; }
+.ep-card { background: white; border-radius: 16px; border: 1px solid var(--gray-mid); overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+.ep-card:hover { box-shadow: 0 8px 32px rgba(10,77,191,0.12); transform: translateY(-2px); }
+.ep-video { position: relative; padding-bottom: 56.25%; background: #000; }
+.ep-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.ep-video-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: white; flex-direction: column; gap: 0.75rem; }
+.ep-video-placeholder svg { width: 48px; height: 48px; opacity: 0.6; }
+.ep-body { padding: 1.25rem; }
+.ep-num { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); margin-bottom: 0.4rem; }
+.ep-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.4; }
+.ep-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 1rem; }
+.ep-actions { display: flex; gap: 0.625rem; flex-wrap: wrap; }
+.ep-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.875rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; transition: opacity 0.15s; }
+.ep-btn:hover { opacity: 0.8; }
+.ep-btn-yt { background: #FF0000; color: white; }
+.ep-btn-sp { background: #1DB954; color: white; }
+.ep-btn svg { width: 14px; height: 14px; }
+.loading { text-align: center; padding: 3rem; color: var(--text-muted); }
+.empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+.empty-state p { margin-bottom: 1rem; }
+.empty-state a { color: var(--blue); text-decoration: underline; }
+
+/* SPOTIFY SECTION */
+.spotify-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+@media (max-width: 768px) { .spotify-wrap { grid-template-columns: 1fr; } }
+.spotify-embed { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+.spotify-embed iframe { display: block; border-radius: 16px; }
+.spotify-text h2 { font-size: 1.75rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 1rem; }
+.spotify-text p { color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.7; }
+.btn-sp { display: inline-flex; align-items: center; gap: 0.5rem; background: #1DB954; color: white; padding: 0.75rem 1.5rem; border-radius: 100px; font-weight: 700; font-size: 0.9rem; transition: opacity 0.15s; }
+.btn-sp:hover { opacity: 0.85; }
+.btn-sp svg { width: 20px; height: 20px; }
+
+/* INSTAGRAM SECTION */
+.ig-card { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 20px; padding: 3rem 2rem; text-align: center; color: white; }
+.ig-card h2 { font-size: 1.75rem; font-weight: 900; margin-bottom: 1rem; }
+.ig-card p { opacity: 0.9; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
+.btn-ig { display: inline-flex; align-items: center; gap: 0.625rem; background: white; color: #dc2743; padding: 0.875rem 1.75rem; border-radius: 100px; font-weight: 800; font-size: 0.95rem; transition: transform 0.15s; }
+.btn-ig:hover { transform: scale(1.03); }
+.btn-ig svg { width: 22px; height: 22px; }
+
+/* FOOTER */
+footer { background: #1D1D1D; color: rgba(255,255,255,0.6); padding: 2rem 1.5rem; text-align: center; font-size: 0.85rem; }
+footer a { color: rgba(255,255,255,0.8); }
+footer a:hover { color: white; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">4K</div>
+      4Kingdom Podcast
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="sermons.html">Sermons</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="auth.html">Sign In</a></li>
+      <li><a href="auth.html#signup" class="nav-cta">Join Community</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Sermons &amp; Episodes</h1>
+  <p>Every episode of 4Kingdom Podcast — watch on YouTube, listen on Spotify, or follow us on Instagram. Choose your platform.</p>
+  <div class="platform-pills">
+    <a href="#youtube" class="pill pill-yt">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      Watch on YouTube
+    </a>
+    <a href="#spotify" class="pill pill-sp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      Listen on Spotify
+    </a>
+    <a href="#instagram" class="pill pill-ig">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      Follow on Instagram
+    </a>
+  </div>
+</section>
+
+<!-- YOUTUBE EPISODES -->
+<section class="section" id="youtube">
+  <div class="container">
+    <span class="section-label">Video Episodes</span>
+    <h2 class="section-title">Watch on YouTube</h2>
+    <p class="section-sub">Every episode is available in full on our YouTube channel. New episodes drop weekly.</p>
+    <div class="episodes-grid" id="episodesGrid">
+      <div class="loading">Loading episodes...</div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="https://www.youtube.com/@4KingdomPodcast" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:0.5rem;background:#FF0000;color:white;padding:0.875rem 2rem;border-radius:100px;font-weight:700;font-size:0.95rem;transition:opacity 0.15s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        View Full YouTube Channel
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SPOTIFY -->
+<section class="section section-alt" id="spotify">
+  <div class="container">
+    <div class="spotify-wrap">
+      <div class="spotify-embed">
+        <iframe
+          src="https://open.spotify.com/embed/show/033s8C5Kg0OttcXfI9AgMK?utm_source=generator&theme=0"
+          width="100%" height="352"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="4Kingdom Podcast on Spotify">
+        </iframe>
+      </div>
+      <div class="spotify-text">
+        <span class="section-label">Audio Episodes</span>
+        <h2>Listen on Spotify</h2>
+        <p>Prefer audio? Every episode of 4Kingdom Podcast is available on Spotify. Listen while you drive, work out, or just need a word of encouragement throughout your day.</p>
+        <a href="https://open.spotify.com/show/033s8C5Kg0OttcXfI9AgMK" target="_blank" rel="noopener" class="btn-sp">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Open in Spotify
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section class="section" id="instagram">
+  <div class="container">
+    <div class="ig-card">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="white" style="margin:0 auto 1rem;">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+      </svg>
+      <h2>Follow Us on Instagram</h2>
+      <p>Stay connected between episodes. We share clips, behind-the-scenes moments, Scripture encouragements, and community updates on our Instagram page.</p>
+      <a href="https://www.instagram.com/4kingdompodcast/" target="_blank" rel="noopener" class="btn-ig">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        @4kingdompodcast
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 4Kingdom Podcast &mdash; <a href="index.html">Home</a> &bull; <a href="sermons.html">Sermons</a> &bull; <a href="contact.html">Contact</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = 'https://ufteogqsrddeqsiytqiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_59MKDhWptLo1tjw7Djy83A_EZBN3c0T';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function extractYtId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadEpisodes() {
+  const grid = document.getElementById('episodesGrid');
+  const { data, error } = await db.from('episodes').select('*').order('episode_number', { ascending: false });
+
+  if (error || !data?.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <p>Episodes are coming soon! Subscribe on <a href="https://www.youtube.com/@4KingdomPodcast" target="_blank">YouTube</a> or <a href="https://open.spotify.com/show/033s8C5Kg0OttcXfI9AgMK" target="_blank">Spotify</a> so you never miss one.</p>
+        <a href="https://www.youtube.com/@4KingdomPodcast" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:0.5rem;background:#FF0000;color:white;padding:0.7rem 1.5rem;border-radius:8px;font-weight:700;font-size:0.875rem;">
+          Visit Our YouTube Channel
+        </a>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = data.map(ep => {
+    const ytId = extractYtId(ep.youtube_url);
+    const videoHtml = ytId
+      ? `<iframe src="https://www.youtube.com/embed/${ytId}" allowfullscreen loading="lazy" title="${esc(ep.title)}"></iframe>`
+      : `<div class="ep-video-placeholder">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span style="font-size:0.85rem;opacity:0.7;">Video coming soon</span>
+        </div>`;
+
+    const ytBtn = ep.youtube_url
+      ? `<a href="${esc(ep.youtube_url)}" target="_blank" rel="noopener" class="ep-btn ep-btn-yt">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          Watch on YouTube
+        </a>` : '';
+
+    const spBtn = `<a href="https://open.spotify.com/show/033s8C5Kg0OttcXfI9AgMK" target="_blank" rel="noopener" class="ep-btn ep-btn-sp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      Listen on Spotify
+    </a>`;
+
+    return `<div class="ep-card">
+      <div class="ep-video">${videoHtml}</div>
+      <div class="ep-body">
+        ${ep.episode_number ? `<div class="ep-num">Episode ${ep.episode_number}</div>` : ''}
+        <div class="ep-title">${esc(ep.title)}</div>
+        ${ep.description ? `<div class="ep-desc">${esc(ep.description)}</div>` : ''}
+        <div class="ep-actions">${ytBtn}${spBtn}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+loadEpisodes();
+</script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Panel | 4Kingdom Podcast</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #0A4DBF; --blue-dark: #083A90; --blue-accent: #DCE8FF;
+  --gray-light: #F5F5F5; --gray-mid: #E8E8E8;
+  --text: #1D1D1D; --text-muted: #5A5A6A; --white: #FFFFFF; --nav-h: 64px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; color: var(--text); background: var(--gray-light); }
+.topnav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: #1D1D1D; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; gap: 1rem; }
+.topnav-logo { display: flex; align-items: center; gap: 0.625rem; font-weight: 800; font-size: 1.1rem; color: white; text-decoration: none; }
+.topnav-logo-icon { width: 32px; height: 32px; background: var(--blue); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
+.admin-badge { background: #DC2626; color: white; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.08em; }
+.topnav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-link { color: rgba(255,255,255,0.7); font-size: 0.875rem; text-decoration: none; transition: color 0.15s; }
+.nav-link:hover { color: white; }
+.btn-sm { padding: 0.4rem 0.875rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid rgba(255,255,255,0.3); background: none; color: rgba(255,255,255,0.8); transition: all 0.15s; }
+.btn-sm:hover { border-color: white; color: white; }
+.layout { display: grid; grid-template-columns: 200px 1fr; min-height: calc(100vh - var(--nav-h)); }
+.sidebar { background: white; border-right: 1px solid var(--gray-mid); padding: 1.25rem 0.875rem; }
+.sidebar-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.75rem 0.75rem 0.4rem; }
+.snav { list-style: none; }
+.snav a { display: flex; align-items: center; gap: 0.625rem; padding: 0.65rem 0.75rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.15s; cursor: pointer; }
+.snav a:hover { background: var(--gray-light); color: var(--text); }
+.snav a.active { background: var(--blue-accent); color: var(--blue); font-weight: 600; }
+.snav a svg { width: 16px; height: 16px; flex-shrink: 0; }
+.main { padding: 2rem; max-width: 960px; }
+.section { display: none; }
+.section.active { display: block; }
+.page-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.375rem; }
+.page-sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.75rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: white; border-radius: 12px; border: 1px solid var(--gray-mid); padding: 1.25rem; }
+.stat-num { font-size: 2rem; font-weight: 900; color: var(--blue); }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+.card { background: white; border-radius: 12px; border: 1px solid var(--gray-mid); padding: 1.5rem; margin-bottom: 1rem; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th { text-align: left; padding: 0.75rem 1rem; border-bottom: 2px solid var(--gray-mid); font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--gray-mid); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-light); }
+.badge { display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.5rem; border-radius: 100px; }
+.badge-pub { background: #DCFCE7; color: #15803D; }
+.badge-priv { background: var(--blue-accent); color: var(--blue); }
+.prayer-text { max-width: 360px; white-space: pre-wrap; word-break: break-word; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.375rem; }
+.form-input, .form-textarea { width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--gray-mid); border-radius: 8px; font-size: 0.95rem; color: var(--text); background: white; font-family: inherit; transition: border-color 0.15s; }
+.form-input:focus, .form-textarea:focus { outline: none; border-color: var(--blue); }
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-group { margin-bottom: 1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.125rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { background: var(--blue-dark); }
+.btn-ghost { background: none; color: var(--text-muted); border: 1.5px solid var(--gray-mid); }
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+.btn-danger { background: none; color: #DC2626; border: 1.5px solid #FECACA; font-size: 0.8rem; padding: 0.35rem 0.75rem; }
+.btn-danger:hover { background: #FEF2F2; }
+.alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1rem; display: none; }
+.alert.show { display: block; }
+.alert-ok { background: #F0FDF4; border: 1px solid #86EFAC; color: #15803D; }
+.alert-err { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
+.loading { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.875rem; }
+.empty { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; }
+#splash { position: fixed; inset: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 0.75rem; }
+#splash-icon { width: 44px; height: 44px; background: var(--blue); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem; }
+.section-head h2 { font-size: 1.1rem; font-weight: 700; }
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div id="splash-icon">4K</div>
+  <p style="color:#5A5A6A;font-size:0.875rem;">Loading admin panel...</p>
+</div>
+
+<nav class="topnav">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="index.html" class="topnav-logo">
+      <div class="topnav-logo-icon">4K</div>
+      4Kingdom
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="topnav-right">
+    <a href="dashboard.html" class="nav-link">Community</a>
+    <button class="btn-sm" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Admin</div>
+    <ul class="snav">
+      <li><a href="#" class="active" onclick="show('overview',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a></li>
+      <li><a href="#" onclick="show('prayers',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        Prayer Requests
+      </a></li>
+      <li><a href="#" onclick="show('members',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Members
+      </a></li>
+      <li><a href="#" onclick="show('subscribers',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email Subscribers
+      </a></li>
+      <li><a href="#" onclick="show('episodes',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Episodes
+      </a></li>
+      <li><a href="#" onclick="show('setup',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41M20 12h-2M6 12H4M17.66 17.66l1.41 1.41M6.34 6.34L4.93 4.93"/></svg>
+        Setup &amp; SQL
+      </a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="sec-overview">
+      <h1 class="page-title">Admin Overview</h1>
+      <p class="page-sub">Welcome back. Here is a summary of your community.</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="ovMembers">—</div><div class="stat-label">Members</div></div>
+        <div class="stat-card"><div class="stat-num" id="ovSubscribers">—</div><div class="stat-label">Email Subscribers</div></div>
+        <div class="stat-card"><div class="stat-num" id="ovPrayers">—</div><div class="stat-label">Prayer Requests</div></div>
+        <div class="stat-card"><div class="stat-num" id="ovComments">—</div><div class="stat-label">Episode Comments</div></div>
+      </div>
+      <div class="card">
+        <h2 style="font-size:1rem;font-weight:700;margin-bottom:1rem;">Recent Prayer Requests</h2>
+        <div id="recentPrayers"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- PRAYER REQUESTS -->
+    <div class="section" id="sec-prayers">
+      <h1 class="page-title">Prayer Requests</h1>
+      <p class="page-sub">All prayer requests submitted by members, including private ones.</p>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Member</th><th>Title</th><th>Request</th><th>Visibility</th><th>Date</th><th></th></tr></thead>
+            <tbody id="prayerTable"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="section" id="sec-members">
+      <h1 class="page-title">Members</h1>
+      <p class="page-sub">Everyone who has created an account in your community.</p>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Admin</th></tr></thead>
+            <tbody id="memberTable"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIBERS -->
+    <div class="section" id="sec-subscribers">
+      <h1 class="page-title">Email Subscribers</h1>
+      <p class="page-sub">Everyone who signed up through the website contact form.</p>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Subscribed</th></tr></thead>
+            <tbody id="subTable"><tr><td colspan="3" class="loading">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EPISODES -->
+    <div class="section" id="sec-episodes">
+      <h1 class="page-title">Manage Episodes</h1>
+      <p class="page-sub">Add and manage podcast episodes. Members can save and comment on them.</p>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem;">Add New Episode</h2>
+        <div id="epAlert" class="alert"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Episode ID (unique, no spaces)</label><input class="form-input" type="text" id="epId" placeholder="e.g. ep2" /></div>
+          <div class="form-group"><label class="form-label">Episode Number</label><input class="form-input" type="number" id="epNum" placeholder="2" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Episode Title</label><input class="form-input" type="text" id="epTitle" placeholder="e.g. Faith Over Fear" /></div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="epDesc" rows="3" placeholder="Brief description of this episode..."></textarea></div>
+        <div class="form-group"><label class="form-label">YouTube URL</label><input class="form-input" type="url" id="epUrl" placeholder="https://youtube.com/watch?v=..." /></div>
+        <div class="form-group"><label class="form-label">Thumbnail URL (optional — leave blank to use YouTube thumbnail)</label><input class="form-input" type="url" id="epThumb" placeholder="https://..." /></div>
+        <button class="btn btn-primary" onclick="addEpisode()">Add Episode</button>
+      </div>
+      <div class="card">
+        <div class="section-head"><h2>Published Episodes</h2></div>
+        <div id="epTable"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- SETUP -->
+    <div class="section" id="sec-setup">
+      <h1 class="page-title">Setup &amp; SQL</h1>
+      <p class="page-sub">Run this SQL in your Supabase SQL Editor to enable all features. Go to supabase.com → your project → SQL Editor → paste and run.</p>
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="section-head">
+          <h2>Required SQL — run this once</h2>
+          <button class="btn btn-ghost" onclick="copySQL()">Copy SQL</button>
+        </div>
+        <pre id="sqlBlock" style="background:var(--gray-light);border-radius:8px;padding:1.25rem;font-size:0.8rem;line-height:1.6;overflow-x:auto;white-space:pre-wrap;color:var(--text);">${SQL_PLACEHOLDER}</pre>
+      </div>
+      <div class="card">
+        <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:1rem;">Make Yourself Admin</h2>
+        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem;">After running the SQL above, run this in the SQL Editor to give yourself admin access. Your user ID is shown below.</p>
+        <div style="background:var(--gray-light);border-radius:8px;padding:1rem;font-family:monospace;font-size:0.85rem;margin-bottom:1rem;" id="adminSql">Loading your user ID...</div>
+        <button class="btn btn-ghost" onclick="copyAdminSql()">Copy</button>
+        <p style="color:var(--text-muted);font-size:0.8rem;margin-top:1rem;">To add Micah as admin, get his user ID from Supabase → Authentication → Users, then run the same INSERT with his ID.</p>
+      </div>
+      <div class="card">
+        <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:0.75rem;">OAuth Providers (Google, Apple, Facebook, Discord)</h2>
+        <p style="color:var(--text-muted);font-size:0.875rem;line-height:1.65;">To enable social login buttons, go to your Supabase dashboard → Authentication → Providers. Enable each provider and follow the setup guide. Google is the easiest to set up first.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = 'https://ufteogqsrddeqsiytqiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_59MKDhWptLo1tjw7Djy83A_EZBN3c0T';
+const SUPABASE_SERVICE_KEY = 'sb_secret_sTJVqClUbo3qCUy0SDpWiA_itDHJ_PB';
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const adminDb = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+let currentUser = null;
+
+const SQL = `-- Run this once in Supabase SQL Editor
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id uuid REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+  first_name text, last_name text,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "profiles_own" ON profiles USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY IF NOT EXISTS "profiles_admin" ON profiles FOR SELECT USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid()));
+
+CREATE TABLE IF NOT EXISTS admin_users (
+  user_id uuid REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY
+);
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "admin_select" ON admin_users FOR SELECT USING (true);
+
+CREATE TABLE IF NOT EXISTS prayer_requests (
+  id bigserial PRIMARY KEY, user_id uuid REFERENCES auth.users ON DELETE CASCADE,
+  title text NOT NULL, content text NOT NULL, is_public boolean DEFAULT false,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE prayer_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "prayer_own" ON prayer_requests USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY IF NOT EXISTS "prayer_public_read" ON prayer_requests FOR SELECT USING (is_public = true);
+CREATE POLICY IF NOT EXISTS "prayer_admin" ON prayer_requests FOR SELECT USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid()));
+
+CREATE TABLE IF NOT EXISTS episodes (
+  id text PRIMARY KEY, episode_number integer,
+  title text NOT NULL, description text,
+  youtube_url text, thumbnail_url text,
+  published_at date DEFAULT CURRENT_DATE,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE episodes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "episodes_read" ON episodes FOR SELECT USING (true);
+CREATE POLICY IF NOT EXISTS "episodes_admin" ON episodes USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid()));
+
+CREATE TABLE IF NOT EXISTS saved_episodes (
+  id bigserial PRIMARY KEY, user_id uuid REFERENCES auth.users ON DELETE CASCADE,
+  episode_id text NOT NULL, episode_title text, episode_description text, episode_url text,
+  saved_at timestamptz DEFAULT now(), UNIQUE(user_id, episode_id)
+);
+ALTER TABLE saved_episodes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "saved_own" ON saved_episodes USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+CREATE TABLE IF NOT EXISTS episode_comments (
+  id bigserial PRIMARY KEY, user_id uuid REFERENCES auth.users ON DELETE CASCADE,
+  episode_id text NOT NULL, content text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE episode_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "comments_read" ON episode_comments FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY IF NOT EXISTS "comments_insert" ON episode_comments FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY IF NOT EXISTS "comments_delete" ON episode_comments FOR DELETE USING (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, first_name, last_name)
+  VALUES (new.id, new.raw_user_meta_data->>'first_name', new.raw_user_meta_data->>'last_name')
+  ON CONFLICT (id) DO NOTHING;
+  RETURN new;
+END;
+$$;
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();`;
+
+document.getElementById('sqlBlock').textContent = SQL;
+
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'auth.html'; return; }
+  currentUser = session.user;
+
+  // Try to check admin_users table — if it errors, the table doesn't exist yet
+  const { data: adminCheck, error: adminErr } = await db
+    .from('admin_users').select('user_id').eq('user_id', currentUser.id).maybeSingle();
+
+  // Table doesn't exist yet — go straight to Setup
+  if (adminErr && (adminErr.code === 'PGRST200' || adminErr.message?.includes('does not exist') || adminErr.message?.includes('relation'))) {
+    document.getElementById('adminSql').textContent =
+      `INSERT INTO admin_users (user_id) VALUES ('${currentUser.id}');`;
+    showSetupBanner('Database tables not set up yet. Run the SQL below to get started, then reload this page.');
+    show('setup', document.querySelector('.snav a[onclick*="setup"]'));
+    document.getElementById('splash').style.display = 'none';
+    return;
+  }
+
+  // Table exists but user is not an admin
+  if (!adminCheck) {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('adminSql').textContent =
+      `INSERT INTO admin_users (user_id) VALUES ('${currentUser.id}');`;
+    showSetupBanner('You are not listed as an admin yet. Run the SQL below, then reload this page.');
+    show('setup', document.querySelector('.snav a[onclick*="setup"]'));
+    return;
+  }
+
+  // Fully authenticated admin
+  document.getElementById('adminSql').textContent =
+    `INSERT INTO admin_users (user_id) VALUES ('${currentUser.id}');`;
+  loadOverview();
+  document.getElementById('splash').style.display = 'none';
+}
+
+function showSetupBanner(msg) {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#FEF9C3;border:1px solid #FDE047;color:#713F12;padding:0.875rem 1.25rem;border-radius:10px;font-size:0.875rem;margin-bottom:1.25rem;font-weight:500;';
+  banner.textContent = '⚠️ ' + msg;
+  const setupSec = document.getElementById('sec-setup');
+  setupSec.insertBefore(banner, setupSec.firstChild);
+}
+
+function show(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.snav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'prayers') loadPrayers();
+  if (name === 'members') loadMembers();
+  if (name === 'subscribers') loadSubscribers();
+  if (name === 'episodes') loadEpisodes();
+}
+
+async function loadOverview() {
+  const [{ count: c1 }, { count: c2 }, { count: c3 }, { count: c4 }] = await Promise.all([
+    adminDb.from('profiles').select('*', { count: 'exact', head: true }),
+    adminDb.from('subscribers').select('*', { count: 'exact', head: true }),
+    adminDb.from('prayer_requests').select('*', { count: 'exact', head: true }),
+    adminDb.from('episode_comments').select('*', { count: 'exact', head: true })
+  ]);
+  document.getElementById('ovMembers').textContent = c1 || 0;
+  document.getElementById('ovSubscribers').textContent = c2 || 0;
+  document.getElementById('ovPrayers').textContent = c3 || 0;
+  document.getElementById('ovComments').textContent = c4 || 0;
+
+  const { data: recent } = await adminDb.from('prayer_requests')
+    .select('*, profiles(first_name,last_name)').order('created_at', { ascending: false }).limit(5);
+  const el = document.getElementById('recentPrayers');
+  if (!recent?.length) { el.innerHTML = '<div class="empty">No prayer requests yet.</div>'; return; }
+  el.innerHTML = recent.map(p => {
+    const name = p.profiles ? p.profiles.first_name + ' ' + (p.profiles.last_name || '') : 'Unknown';
+    return `<div style="padding:0.75rem 0;border-bottom:1px solid var(--gray-mid);">
+      <div style="display:flex;justify-content:space-between;gap:1rem;margin-bottom:0.25rem;">
+        <strong style="font-size:0.9rem;">${esc(p.title)}</strong>
+        <span class="badge ${p.is_public ? 'badge-pub' : 'badge-priv'}">${p.is_public ? 'Public' : 'Private'}</span>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.85rem;">${esc(name)} &bull; ${fmtDate(p.created_at)}</p>
+    </div>`;
+  }).join('');
+}
+
+async function loadPrayers() {
+  const { data } = await adminDb.from('prayer_requests')
+    .select('*, profiles(first_name,last_name)').order('created_at', { ascending: false });
+  const tbody = document.getElementById('prayerTable');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No prayer requests yet.</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(p => {
+    const name = p.profiles ? p.profiles.first_name + ' ' + (p.profiles.last_name || '') : '—';
+    return `<tr>
+      <td>${esc(name)}</td>
+      <td style="font-weight:600;">${esc(p.title)}</td>
+      <td><div class="prayer-text">${esc(p.content)}</div></td>
+      <td><span class="badge ${p.is_public ? 'badge-pub' : 'badge-priv'}">${p.is_public ? 'Public' : 'Private'}</span></td>
+      <td style="white-space:nowrap;">${fmtDate(p.created_at)}</td>
+      <td><button class="btn btn-danger" onclick="deletePrayer(${p.id})">Delete</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function deletePrayer(id) {
+  if (!confirm('Delete this prayer request?')) return;
+  await adminDb.from('prayer_requests').delete().eq('id', id);
+  loadPrayers();
+}
+
+async function loadMembers() {
+  const { data } = await adminDb.from('profiles').select('*').order('created_at', { ascending: false });
+  const { data: admins } = await adminDb.from('admin_users').select('user_id');
+  const adminSet = new Set((admins || []).map(a => a.user_id));
+  const tbody = document.getElementById('memberTable');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="4"><div class="empty">No members yet.</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(m => `<tr>
+    <td style="font-weight:600;">${esc((m.first_name || '') + ' ' + (m.last_name || ''))}</td>
+    <td style="color:var(--text-muted);">${esc(m.id)}</td>
+    <td style="white-space:nowrap;">${fmtDate(m.created_at)}</td>
+    <td>${adminSet.has(m.id) ? '<span class="badge badge-pub">Admin</span>' : '—'}</td>
+  </tr>`).join('');
+}
+
+async function loadSubscribers() {
+  const { data } = await adminDb.from('subscribers').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('subTable');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="3"><div class="empty">No email subscribers yet.</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(s => `<tr>
+    <td style="font-weight:600;">${esc((s.first_name || '') + ' ' + (s.last_name || ''))}</td>
+    <td>${esc(s.email)}</td>
+    <td style="white-space:nowrap;">${fmtDate(s.created_at)}</td>
+  </tr>`).join('');
+}
+
+async function loadEpisodes() {
+  const { data } = await adminDb.from('episodes').select('*').order('episode_number', { ascending: false });
+  const el = document.getElementById('epTable');
+  if (!data?.length) { el.innerHTML = '<div class="empty">No episodes yet. Add one above.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Title</th><th>Date</th><th></th></tr></thead><tbody>` +
+    data.map(ep => `<tr>
+      <td>${ep.episode_number || '—'}</td>
+      <td style="font-weight:600;">${esc(ep.title)}</td>
+      <td>${fmtDate(ep.published_at || ep.created_at)}</td>
+      <td><button class="btn btn-danger" onclick="deleteEpisode('${ep.id}')">Delete</button></td>
+    </tr>`).join('') + '</tbody></table>';
+}
+
+async function addEpisode() {
+  const id = document.getElementById('epId').value.trim();
+  const num = parseInt(document.getElementById('epNum').value);
+  const title = document.getElementById('epTitle').value.trim();
+  const desc = document.getElementById('epDesc').value.trim();
+  const url = document.getElementById('epUrl').value.trim();
+  const thumb = document.getElementById('epThumb').value.trim();
+  const al = document.getElementById('epAlert');
+
+  if (!id || !title) { showAl(al, 'Episode ID and title are required.', false); return; }
+  if (!/^[a-z0-9_-]+$/.test(id)) { showAl(al, 'Episode ID must use only lowercase letters, numbers, hyphens, underscores.', false); return; }
+
+  const thumbnailUrl = thumb || (url && url.includes('youtube.com') ? 'https://img.youtube.com/vi/' + extractYtId(url) + '/hqdefault.jpg' : '');
+
+  const { error } = await adminDb.from('episodes').insert({ id, episode_number: num || null, title, description: desc, youtube_url: url, thumbnail_url: thumbnailUrl });
+  if (error) { showAl(al, error.message, false); }
+  else {
+    showAl(al, 'Episode added successfully.', true);
+    ['epId','epNum','epTitle','epDesc','epUrl','epThumb'].forEach(f => document.getElementById(f).value = '');
+    loadEpisodes();
+  }
+}
+
+async function deleteEpisode(id) {
+  if (!confirm('Delete this episode?')) return;
+  await adminDb.from('episodes').delete().eq('id', id);
+  loadEpisodes();
+}
+
+function extractYtId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+function copySQL() {
+  navigator.clipboard.writeText(SQL).then(() => alert('SQL copied to clipboard!'));
+}
+
+function copyAdminSql() {
+  const txt = document.getElementById('adminSql').textContent;
+  navigator.clipboard.writeText(txt).then(() => alert('Copied!'));
+}
+
+async function signOut() { await db.auth.signOut(); window.location.href = 'auth.html'; }
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'; }
+function showAl(el, msg, ok) { el.textContent = msg; el.className = 'alert show ' + (ok ? 'alert-ok' : 'alert-err'); }
+
+init();
+</script>
+</body>
+</html>

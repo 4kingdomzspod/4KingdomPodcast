@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Community | 4Kingdom Podcast</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #0A4DBF; --blue-dark: #083A90; --blue-accent: #DCE8FF;
+  --gray-light: #F5F5F5; --gray-mid: #E8E8E8;
+  --text: #1D1D1D; --text-muted: #5A5A6A; --white: #FFFFFF; --nav-h: 64px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; color: var(--text); background: var(--gray-light); }
+.topnav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: var(--white); border-bottom: 1px solid var(--gray-mid); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; gap: 1rem; }
+.topnav-logo { display: flex; align-items: center; gap: 0.625rem; font-weight: 800; font-size: 1.1rem; color: var(--blue); text-decoration: none; }
+.topnav-logo-icon { width: 32px; height: 32px; background: var(--blue); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; flex-shrink: 0; }
+.topnav-right { display: flex; align-items: center; gap: 1rem; }
+.user-badge { display: flex; align-items: center; gap: 0.5rem; }
+.user-avatar { width: 34px; height: 34px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+.user-name { font-weight: 600; font-size: 0.9rem; }
+.btn-sm { padding: 0.4rem 0.875rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid var(--gray-mid); background: none; color: var(--text-muted); transition: all 0.15s; }
+.btn-sm:hover { border-color: #DC2626; color: #DC2626; }
+.app-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - var(--nav-h)); }
+.sidebar { background: var(--white); border-right: 1px solid var(--gray-mid); padding: 1.25rem 0.875rem; }
+.sidebar-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.75rem 0.75rem 0.4rem; }
+.sidebar-nav { list-style: none; }
+.sidebar-nav a { display: flex; align-items: center; gap: 0.625rem; padding: 0.65rem 0.75rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.15s; cursor: pointer; }
+.sidebar-nav a:hover { background: var(--gray-light); color: var(--text); }
+.sidebar-nav a.active { background: var(--blue-accent); color: var(--blue); font-weight: 600; }
+.sidebar-nav a svg { width: 17px; height: 17px; flex-shrink: 0; }
+.main { padding: 2rem; max-width: 860px; }
+.section { display: none; }
+.section.active { display: block; }
+.page-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.375rem; }
+.page-sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.75rem; }
+.card { background: var(--white); border-radius: 12px; border: 1px solid var(--gray-mid); padding: 1.5rem; margin-bottom: 1rem; }
+.inner-tabs { display: flex; border-bottom: 1px solid var(--gray-mid); margin-bottom: 1.5rem; }
+.itab { padding: 0.625rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all 0.15s; margin-bottom: -1px; }
+.itab.active { border-bottom-color: var(--blue); color: var(--blue); font-weight: 600; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.375rem; }
+.form-input, .form-textarea { width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--gray-mid); border-radius: 8px; font-size: 0.95rem; color: var(--text); background: var(--white); font-family: inherit; transition: border-color 0.15s; }
+.form-input:focus, .form-textarea:focus { outline: none; border-color: var(--blue); }
+.form-textarea { resize: vertical; min-height: 90px; }
+.form-group { margin-bottom: 1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.625rem 1.125rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { background: var(--blue-dark); }
+.btn-secondary { background: white; color: var(--blue); border: 1.5px solid var(--blue); }
+.btn-secondary:hover { background: var(--blue-accent); }
+.btn-ghost { background: none; color: var(--text-muted); border: 1.5px solid var(--gray-mid); }
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+.btn-danger { background: none; color: #DC2626; border: 1.5px solid #FECACA; }
+.btn-danger:hover { background: #FEF2F2; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.privacy-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.priv-btn { flex: 1; padding: 0.6rem 0.5rem; background: var(--gray-light); border: 1.5px solid var(--gray-mid); border-radius: 8px; font-size: 0.8rem; font-weight: 500; cursor: pointer; font-family: inherit; color: var(--text-muted); transition: all 0.15s; text-align: center; }
+.priv-btn.active { background: var(--blue-accent); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+.prayer-item { background: var(--white); border-radius: 10px; border: 1px solid var(--gray-mid); padding: 1.125rem; margin-bottom: 0.75rem; }
+.prayer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+.prayer-title { font-weight: 700; font-size: 0.95rem; }
+.badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.5rem; border-radius: 100px; flex-shrink: 0; }
+.badge-pub { background: #DCFCE7; color: #15803D; }
+.badge-priv { background: var(--blue-accent); color: var(--blue); }
+.prayer-content { color: var(--text-muted); font-size: 0.875rem; line-height: 1.65; margin-bottom: 0.5rem; }
+.prayer-meta { font-size: 0.75rem; color: var(--text-muted); }
+.ep-card { background: var(--white); border-radius: 12px; border: 1px solid var(--gray-mid); overflow: hidden; margin-bottom: 1rem; }
+.ep-thumb { background: var(--blue-dark); aspect-ratio: 16/9; overflow: hidden; }
+.ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.ep-body { padding: 1.25rem; }
+.ep-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue); margin-bottom: 0.4rem; }
+.ep-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+.ep-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem; }
+.ep-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.comment-section { border-top: 1px solid var(--gray-mid); margin-top: 1rem; padding-top: 1rem; display: none; }
+.comment-item { padding: 0.75rem 0; border-bottom: 1px solid var(--gray-mid); }
+.comment-item:last-of-type { border-bottom: none; }
+.comment-author { font-size: 0.85rem; font-weight: 700; }
+.comment-text { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-top: 0.2rem; }
+.comment-date { font-size: 0.73rem; color: var(--text-muted); margin-top: 0.2rem; }
+.profile-avatar { width: 68px; height: 68px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+.stat-box { background: var(--gray-light); border-radius: 10px; padding: 1rem; text-align: center; }
+.stat-num { font-size: 1.5rem; font-weight: 800; color: var(--blue); }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+.alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1rem; display: none; }
+.alert.show { display: block; }
+.alert-ok { background: #F0FDF4; border: 1px solid #86EFAC; color: #15803D; }
+.alert-err { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
+.empty { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
+.loading { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.875rem; }
+#splash { position: fixed; inset: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 0.75rem; }
+#splash-icon { width: 44px; height: 44px; background: var(--blue); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; }
+#splash p { color: var(--text-muted); font-size: 0.875rem; }
+@media (max-width: 768px) {
+  .app-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .user-name { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div id="splash-icon">4K</div>
+  <p>Loading your community...</p>
+</div>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-logo">
+    <div class="topnav-logo-icon">4K</div>
+    4Kingdom
+  </a>
+  <div class="topnav-right">
+    <div class="user-badge">
+      <div class="user-avatar" id="uAvatar">?</div>
+      <span class="user-name" id="uName"></span>
+    </div>
+    <button class="btn-sm" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Community</div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active" onclick="show('prayer',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        Prayer Requests
+      </a></li>
+      <li><a href="#" onclick="show('episodes',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Episodes
+      </a></li>
+      <li><a href="#" onclick="show('feed',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Community Feed
+      </a></li>
+      <li><a href="#" onclick="show('profile',this);return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        My Profile
+      </a></li>
+    </ul>
+    <div id="adminLink" style="display:none;">
+      <div class="sidebar-label">Admin</div>
+      <ul class="sidebar-nav">
+        <li><a href="admin.html" style="color:#DC2626;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin Panel
+        </a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- PRAYER -->
+    <div class="section active" id="sec-prayer">
+      <h1 class="page-title">Prayer Requests</h1>
+      <p class="page-sub">Share what is on your heart. We are believing with you.</p>
+      <div class="inner-tabs">
+        <button class="itab active" onclick="itab('prayer','mine',this)">My Requests</button>
+        <button class="itab" onclick="itab('prayer','public',this)">Community</button>
+        <button class="itab" onclick="itab('prayer','submit',this)">Submit Request</button>
+      </div>
+      <div id="prayer-mine"><div class="loading" id="myPrayLoad">Loading...</div><div id="myPrayList"></div></div>
+      <div id="prayer-public" style="display:none;"><div class="loading" id="pubPrayLoad">Loading...</div><div id="pubPrayList"></div></div>
+      <div id="prayer-submit" style="display:none;">
+        <div class="card">
+          <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem;">Share a Prayer Request</h2>
+          <div id="prayAlert" class="alert"></div>
+          <div class="form-group"><label class="form-label">Title</label><input class="form-input" type="text" id="prayTitle" placeholder="e.g. Healing for my family..." /></div>
+          <div class="form-group"><label class="form-label">Your prayer request</label><textarea class="form-textarea" id="prayBody" rows="5" placeholder="Write what is on your heart..."></textarea></div>
+          <div class="form-group">
+            <label class="form-label">Visibility</label>
+            <div class="privacy-row">
+              <button class="priv-btn active" id="privBtn" onclick="setPriv(true)">Private — only you and admins see this</button>
+              <button class="priv-btn" id="pubBtn" onclick="setPriv(false)">Public — community can pray with you</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="submitPrayer()">Submit Prayer Request</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EPISODES -->
+    <div class="section" id="sec-episodes">
+      <h1 class="page-title">Episodes</h1>
+      <p class="page-sub">Watch, save, comment, and share episodes with your community.</p>
+      <div class="inner-tabs">
+        <button class="itab active" onclick="itab('episodes','all',this)">All Episodes</button>
+        <button class="itab" onclick="itab('episodes','saved',this)">Saved</button>
+      </div>
+      <div id="episodes-all"><div class="loading" id="epLoad">Loading episodes...</div><div id="epList"></div></div>
+      <div id="episodes-saved" style="display:none;"><div id="savedList"></div></div>
+    </div>
+
+    <!-- COMMUNITY FEED -->
+    <div class="section" id="sec-feed">
+      <h1 class="page-title">Community Feed</h1>
+      <p class="page-sub">Public prayer requests and episode comments from the 4Kingdom community.</p>
+      <div class="loading" id="feedLoad">Loading feed...</div>
+      <div id="feedList"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section" id="sec-profile">
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-sub">Manage your account details and see your activity.</p>
+      <div class="card">
+        <div class="profile-avatar" id="profAvatar">?</div>
+        <div id="profAlert" class="alert"></div>
+        <div class="form-row" style="margin-bottom:1rem;">
+          <div class="form-group" style="margin:0;"><label class="form-label">First Name</label><input class="form-input" type="text" id="profFirst" /></div>
+          <div class="form-group" style="margin:0;"><label class="form-label">Last Name</label><input class="form-input" type="text" id="profLast" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="profEmail" disabled style="opacity:0.6;" /></div>
+        <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-num" id="sPray">0</div><div class="stat-label">Prayer Requests</div></div>
+        <div class="stat-box"><div class="stat-num" id="sSaved">0</div><div class="stat-label">Saved Episodes</div></div>
+        <div class="stat-box"><div class="stat-num" id="sComments">0</div><div class="stat-label">Comments</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = 'https://ufteogqsrddeqsiytqiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_59MKDhWptLo1tjw7Djy83A_EZBN3c0T';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let user = null;
+let isPrivate = true;
+let savedIds = new Set();
+
+const FALLBACK_EP = [{
+  id: 'ep1', episode_number: 1,
+  title: 'Isaiah 41:10 — When God Says "Do Not Fear"',
+  description: 'Alexander and Micah talk through the verse that inspired this entire ministry — what it means to receive God\'s promise personally and walk it out practically every day.',
+  youtube_url: '#',
+  thumbnail_url: 'https://placehold.co/600x338/0A4DBF/FFFFFF?text=Episode+1'
+}];
+
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'auth.html'; return; }
+  user = session.user;
+
+  const first = user.user_metadata?.first_name || user.email.split('@')[0];
+  const last = user.user_metadata?.last_name || '';
+  const init2 = (first[0] || '') + (last[0] || '');
+  document.getElementById('uAvatar').textContent = (init2 || first[0]).toUpperCase();
+  document.getElementById('uName').textContent = first;
+  document.getElementById('profAvatar').textContent = (init2 || first[0]).toUpperCase();
+
+  const { data: admin } = await db.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+  if (admin) document.getElementById('adminLink').style.display = '';
+
+  await loadSavedIds();
+  loadMyPrayers();
+  loadEpisodes();
+  document.getElementById('splash').style.display = 'none';
+}
+
+// ─── NAV ───
+function show(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'profile') loadProfile();
+  if (name === 'feed') loadFeed();
+}
+
+function itab(section, tab, btn) {
+  const sec = document.getElementById('sec-' + section);
+  sec.querySelectorAll('.itab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const prefix = section;
+  sec.querySelectorAll('[id^="' + prefix + '-"]').forEach(el => el.style.display = 'none');
+  document.getElementById(prefix + '-' + tab).style.display = '';
+  if (section === 'prayer' && tab === 'public') loadPublicPrayers();
+  if (section === 'episodes' && tab === 'saved') loadSaved();
+}
+
+// ─── PRAYER ───
+function setPriv(priv) {
+  isPrivate = priv;
+  document.getElementById('privBtn').classList.toggle('active', priv);
+  document.getElementById('pubBtn').classList.toggle('active', !priv);
+}
+
+async function loadMyPrayers() {
+  const { data } = await db.from('prayer_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+  document.getElementById('myPrayLoad').style.display = 'none';
+  const el = document.getElementById('myPrayList');
+  if (!data?.length) { el.innerHTML = '<div class="empty">You have not submitted any prayer requests yet.<br/><br/><button class="btn btn-primary" onclick="document.querySelectorAll(\'#sec-prayer .itab\')[2].click()">Submit Your First Request</button></div>'; return; }
+  el.innerHTML = data.map(p => prayerHtml(p, true)).join('');
+}
+
+async function loadPublicPrayers() {
+  document.getElementById('pubPrayLoad').style.display = '';
+  const { data } = await db.from('prayer_requests').select('*, profiles(first_name,last_name)').eq('is_public', true).order('created_at', { ascending: false });
+  document.getElementById('pubPrayLoad').style.display = 'none';
+  const el = document.getElementById('pubPrayList');
+  if (!data?.length) { el.innerHTML = '<div class="empty">No public prayer requests yet. Be the first to share.</div>'; return; }
+  el.innerHTML = data.map(p => {
+    const name = p.profiles ? p.profiles.first_name + ' ' + (p.profiles.last_name?.[0] || '') + '.' : 'Community Member';
+    return prayerHtml(p, false, name);
+  }).join('');
+}
+
+function prayerHtml(p, showDelete, author) {
+  return `<div class="prayer-item" id="pr-${p.id}">
+    <div class="prayer-header">
+      <span class="prayer-title">${esc(p.title)}</span>
+      <span class="badge ${p.is_public ? 'badge-pub' : 'badge-priv'}">${p.is_public ? 'Public' : 'Private'}</span>
+    </div>
+    <p class="prayer-content">${esc(p.content)}</p>
+    <div class="prayer-meta">${author ? esc(author) + ' &bull; ' : ''}${fmtDate(p.created_at)}${showDelete ? ' &bull; <a href="#" onclick="deletePrayer(' + p.id + ');return false;" style="color:#DC2626;">Delete</a>' : ''}</div>
+  </div>`;
+}
+
+async function submitPrayer() {
+  const title = document.getElementById('prayTitle').value.trim();
+  const content = document.getElementById('prayBody').value.trim();
+  const al = document.getElementById('prayAlert');
+  if (!title || !content) { showAl(al, 'Please fill in the title and your prayer request.', false); return; }
+  const { error } = await db.from('prayer_requests').insert({ user_id: user.id, title, content, is_public: !isPrivate });
+  if (error) { showAl(al, 'Something went wrong. Please try again.', false); }
+  else {
+    showAl(al, 'Your prayer request has been submitted. We are believing with you.', true);
+    document.getElementById('prayTitle').value = '';
+    document.getElementById('prayBody').value = '';
+    loadMyPrayers();
+  }
+}
+
+async function deletePrayer(id) {
+  if (!confirm('Delete this prayer request?')) return;
+  await db.from('prayer_requests').delete().eq('id', id).eq('user_id', user.id);
+  document.getElementById('pr-' + id)?.remove();
+}
+
+// ─── EPISODES ───
+async function loadSavedIds() {
+  const { data } = await db.from('saved_episodes').select('episode_id').eq('user_id', user.id);
+  savedIds = new Set((data || []).map(r => r.episode_id));
+}
+
+async function loadEpisodes() {
+  const { data } = await db.from('episodes').select('*').order('episode_number', { ascending: false });
+  const eps = (data && data.length) ? data : FALLBACK_EP;
+  document.getElementById('epLoad').style.display = 'none';
+  document.getElementById('epList').innerHTML = eps.map(ep => epHtml(ep)).join('');
+}
+
+function epHtml(ep) {
+  const saved = savedIds.has(ep.id);
+  return `<div class="ep-card" id="ec-${ep.id}">
+    <div class="ep-thumb"><img src="${ep.thumbnail_url || 'https://placehold.co/600x338/083A90/FFFFFF?text=Episode'}" alt="${esc(ep.title)}" loading="lazy" /></div>
+    <div class="ep-body">
+      <div class="ep-label">Episode ${ep.episode_number || ''}</div>
+      <h3 class="ep-title">${esc(ep.title)}</h3>
+      <p class="ep-desc">${esc(ep.description || '')}</p>
+      <div class="ep-actions">
+        <a href="${ep.youtube_url || '#'}" target="_blank" class="btn btn-primary" style="text-decoration:none;">Watch</a>
+        <button class="btn ${saved ? 'btn-primary' : 'btn-secondary'}" id="savebtn-${ep.id}" onclick="toggleSave('${ep.id}','${esc(ep.title)}','${esc(ep.description||'')}','${ep.youtube_url||'#'}',this)">${saved ? '&#10003; Saved' : 'Save'}</button>
+        <button class="btn btn-ghost" onclick="toggleComments('${ep.id}')">Comments</button>
+        <button class="btn btn-ghost" onclick="share('${esc(ep.title)}','${ep.youtube_url||'#'}')">Share</button>
+      </div>
+      <div class="comment-section" id="cs-${ep.id}">
+        <div id="cl-${ep.id}" class="loading">Loading comments...</div>
+        <div style="margin-top:0.875rem;">
+          <textarea class="form-textarea" id="ci-${ep.id}" rows="2" placeholder="Write a comment..." style="margin-bottom:0.5rem;"></textarea>
+          <button class="btn btn-primary" onclick="postComment('${ep.id}')">Post</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function toggleSave(id, title, desc, url, btn) {
+  if (savedIds.has(id)) {
+    await db.from('saved_episodes').delete().eq('user_id', user.id).eq('episode_id', id);
+    savedIds.delete(id);
+    btn.textContent = 'Save'; btn.className = 'btn btn-secondary';
+  } else {
+    await db.from('saved_episodes').insert({ user_id: user.id, episode_id: id, episode_title: title, episode_description: desc, episode_url: url });
+    savedIds.add(id);
+    btn.innerHTML = '&#10003; Saved'; btn.className = 'btn btn-primary';
+  }
+}
+
+async function loadSaved() {
+  const { data } = await db.from('saved_episodes').select('*').eq('user_id', user.id).order('saved_at', { ascending: false });
+  const el = document.getElementById('savedList');
+  if (!data?.length) { el.innerHTML = '<div class="empty">No saved episodes yet. Go to All Episodes and save the ones you want to revisit.</div>'; return; }
+  el.innerHTML = data.map(ep => `<div class="ep-card">
+    <div class="ep-body">
+      <h3 class="ep-title">${esc(ep.episode_title)}</h3>
+      <p class="ep-desc">${esc(ep.episode_description || '')}</p>
+      <div class="ep-actions">
+        <a href="${ep.episode_url || '#'}" target="_blank" class="btn btn-primary" style="text-decoration:none;">Watch</a>
+        <button class="btn btn-danger" onclick="unsave('${ep.episode_id}',this.closest('.ep-card'))">Remove</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+async function unsave(id, card) {
+  await db.from('saved_episodes').delete().eq('user_id', user.id).eq('episode_id', id);
+  savedIds.delete(id);
+  card.remove();
+}
+
+function share(title, url) {
+  if (navigator.share) { navigator.share({ title: title + ' | 4Kingdom Podcast', url }); }
+  else { navigator.clipboard.writeText(url).then(() => alert('Link copied!')); }
+}
+
+// ─── COMMENTS ───
+async function toggleComments(epId) {
+  const el = document.getElementById('cs-' + epId);
+  const open = el.style.display === '';
+  el.style.display = open ? 'none' : '';
+  if (!open) loadComments(epId);
+}
+
+async function loadComments(epId) {
+  const { data } = await db.from('episode_comments').select('*, profiles(first_name,last_name)').eq('episode_id', epId).order('created_at', { ascending: true });
+  const el = document.getElementById('cl-' + epId);
+  if (!data?.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:0.875rem;">No comments yet. Be the first.</p>'; return; }
+  el.innerHTML = data.map(c => {
+    const name = c.profiles ? c.profiles.first_name + ' ' + (c.profiles.last_name || '') : 'Community Member';
+    return `<div class="comment-item"><div class="comment-author">${esc(name)}</div><div class="comment-text">${esc(c.content)}</div><div class="comment-date">${fmtDate(c.created_at)}</div></div>`;
+  }).join('');
+}
+
+async function postComment(epId) {
+  const input = document.getElementById('ci-' + epId);
+  const content = input.value.trim();
+  if (!content) return;
+  const { error } = await db.from('episode_comments').insert({ user_id: user.id, episode_id: epId, content });
+  if (!error) { input.value = ''; loadComments(epId); }
+}
+
+// ─── COMMUNITY FEED ───
+async function loadFeed() {
+  document.getElementById('feedLoad').style.display = '';
+  const [{ data: prayers }, { data: comments }] = await Promise.all([
+    db.from('prayer_requests').select('*, profiles(first_name,last_name)').eq('is_public', true).order('created_at', { ascending: false }).limit(15),
+    db.from('episode_comments').select('*, profiles(first_name,last_name)').order('created_at', { ascending: false }).limit(15)
+  ]);
+  document.getElementById('feedLoad').style.display = 'none';
+
+  const items = [
+    ...(prayers || []).map(p => ({ type: 'prayer', date: p.created_at, title: p.title, body: p.content, author: p.profiles ? p.profiles.first_name + ' ' + (p.profiles.last_name?.[0] || '') + '.' : 'Member' })),
+    ...(comments || []).map(c => ({ type: 'comment', date: c.created_at, title: 'Episode comment', body: c.content, author: c.profiles ? c.profiles.first_name + ' ' + (c.profiles.last_name?.[0] || '') + '.' : 'Member' }))
+  ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const el = document.getElementById('feedList');
+  if (!items.length) { el.innerHTML = '<div class="empty">The community feed is quiet. Be the first to share.</div>'; return; }
+  el.innerHTML = items.map(i => `<div class="prayer-item">
+    <div class="prayer-header">
+      <span class="prayer-title">${i.type === 'prayer' ? 'Prayer: ' : 'Comment: '}${esc(i.title)}</span>
+      <span class="badge ${i.type === 'prayer' ? 'badge-pub' : ''}" style="${i.type === 'comment' ? 'background:#EDE9FE;color:#5B21B6;' : ''}">${i.type === 'prayer' ? 'Prayer' : 'Comment'}</span>
+    </div>
+    <p class="prayer-content">${esc(i.body)}</p>
+    <div class="prayer-meta">${esc(i.author)} &bull; ${fmtDate(i.date)}</div>
+  </div>`).join('');
+}
+
+// ─── PROFILE ───
+async function loadProfile() {
+  document.getElementById('profEmail').value = user.email;
+  document.getElementById('profFirst').value = user.user_metadata?.first_name || '';
+  document.getElementById('profLast').value = user.user_metadata?.last_name || '';
+  const [{ count: c1 }, { count: c2 }, { count: c3 }] = await Promise.all([
+    db.from('prayer_requests').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+    db.from('saved_episodes').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+    db.from('episode_comments').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+  ]);
+  document.getElementById('sPray').textContent = c1 || 0;
+  document.getElementById('sSaved').textContent = c2 || 0;
+  document.getElementById('sComments').textContent = c3 || 0;
+}
+
+async function saveProfile() {
+  const first = document.getElementById('profFirst').value.trim();
+  const last = document.getElementById('profLast').value.trim();
+  const al = document.getElementById('profAlert');
+  const { error } = await db.auth.updateUser({ data: { first_name: first, last_name: last } });
+  if (error) { showAl(al, 'Failed to update. Please try again.', false); return; }
+  await db.from('profiles').upsert({ id: user.id, first_name: first, last_name: last });
+  showAl(al, 'Profile updated successfully.', true);
+  const init2 = (first[0] || '') + (last[0] || '');
+  document.getElementById('uAvatar').textContent = init2.toUpperCase();
+  document.getElementById('profAvatar').textContent = init2.toUpperCase();
+  document.getElementById('uName').textContent = first;
+}
+
+// ─── UTILS ───
+async function signOut() { await db.auth.signOut(); window.location.href = 'auth.html'; }
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
+function showAl(el, msg, ok) { el.textContent = msg; el.className = 'alert show ' + (ok ? 'alert-ok' : 'alert-err'); }
+
+init();
+</script>
+</body>
+</html>
